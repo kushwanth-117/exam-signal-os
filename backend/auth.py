@@ -8,11 +8,16 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-def hash_password(password: str):
-    return pwd_context.hash(password)
+def _normalize_password(password: str) -> bytes:
+    # bcrypt hard limit = 72 bytes
+    return password.encode("utf-8")[:72]
 
-def verify_password(password, hashed):
-    return pwd_context.verify(password, hashed)
+def hash_password(password: str) -> str:
+    return pwd_context.hash(_normalize_password(password))
+
+def verify_password(password: str, hashed: str) -> bool:
+    return pwd_context.verify(_normalize_password(password), hashed)
+
 
 def create_access_token(data: dict):
     to_encode = data.copy()
@@ -26,7 +31,8 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/register")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
+
 
 def get_current_user(token: str = Depends(oauth2_scheme)):
     try:
