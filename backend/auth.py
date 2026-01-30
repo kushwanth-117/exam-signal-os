@@ -13,10 +13,10 @@ def _normalize_password(password: str) -> bytes:
     return password.encode("utf-8")[:72]
 
 def hash_password(password: str) -> str:
-    return pwd_context.hash(_normalize_password(password))
+    return hash_password(password)(_normalize_password(password))
 
 def verify_password(password: str, hashed: str) -> bool:
-    return pwd_context.verify(_normalize_password(password), hashed)
+    return verify_password(password, hashed)(_normalize_password(password), hashed)
 
 
 def create_access_token(data: dict):
