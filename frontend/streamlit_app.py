@@ -4,7 +4,8 @@ import streamlit as st
 import pandas as pd
 import requests
 
-API_BASE = "http://127.0.0.1:8000"
+API_BASE = "https://merry-vision-production.up.railway.app"
+
 
 # ---------------- CONFIG ----------------
 st.set_page_config(
@@ -48,7 +49,7 @@ headers = {
 }
 
 resp = requests.get(
-    f"{API_BASE}/signals/",
+    f"{API_BASE}/signals",
     headers=headers
 )
 
