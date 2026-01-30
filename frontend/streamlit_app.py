@@ -27,8 +27,8 @@ with st.form("login_form"):
     submitted = st.form_submit_button("Login / Register")
 
 if submitted:
-    # 1️⃣ Try login first
-    resp = requests.post(
+    # Step 1: Try login
+    login_resp = requests.post(
         f"{API_BASE}/auth/login",
         data={
             "username": email,
@@ -36,9 +36,9 @@ if submitted:
         }
     )
 
-    # 2️⃣ If login fails, try register
-    if resp.status_code != 200:
-        resp = requests.post(
+    # Step 2: If login fails, try register
+    if login_resp.status_code != 200:
+        register_resp = requests.post(
             f"{API_BASE}/auth/register",
             json={
                 "email": email,
@@ -46,15 +46,22 @@ if submitted:
             }
         )
 
-    if resp.status_code == 200:
-        st.session_state["token"] = resp.json()["access_token"]
-        st.success("Logged in successfully")
-    else:
-        st.error("Authentication failed")
+        if register_resp.status_code not in (200, 201):
+            st.error("Authentication failed")
+            st.stop()
 
+        # Step 3: Login again after successful register
+        login_resp = requests.post(
+            f"{API_BASE}/auth/login",
+            data={
+                "username": email,
+                "password": password
+            }
+        )
 
-    if resp.status_code == 200:
-        st.session_state["token"] = resp.json()["access_token"]
+    # Step 4: Final token check
+    if login_resp.status_code == 200:
+        st.session_state["token"] = login_resp.json()["access_token"]
         st.success("Logged in successfully")
     else:
         st.error("Authentication failed")
