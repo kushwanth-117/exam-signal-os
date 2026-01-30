@@ -27,7 +27,6 @@ with st.form("login_form"):
     submitted = st.form_submit_button("Login / Register")
 
 if submitted:
-    # 1️⃣ Try login
     login_resp = requests.post(
         f"{API_BASE}/auth/login",
         data={
@@ -36,12 +35,14 @@ if submitted:
         }
     )
 
+    st.write("LOGIN STATUS:", login_resp.status_code)
+    st.write("LOGIN RESPONSE:", login_resp.text)
+
     if login_resp.status_code == 200:
         st.session_state["token"] = login_resp.json()["access_token"]
         st.success("Logged in successfully")
 
     else:
-        # 2️⃣ Register
         register_resp = requests.post(
             f"{API_BASE}/auth/register",
             json={
@@ -49,6 +50,9 @@ if submitted:
                 "password": password
             }
         )
+
+        st.write("REGISTER STATUS:", register_resp.status_code)
+        st.write("REGISTER RESPONSE:", register_resp.text)
 
         if register_resp.status_code == 200:
             st.session_state["token"] = register_resp.json()["access_token"]
