@@ -1,0 +1,3 @@
+question_id,exam_id,year,marks,question_text
+Q1,GATE_ECE,2022,2,What is the bandwidth of an RC low pass filter?
+Q2,GATE_ECE,2022,1,Determine the output of the given op amp circuit

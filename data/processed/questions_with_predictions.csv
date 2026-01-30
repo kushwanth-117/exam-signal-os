@@ -1,0 +1,3 @@
+question_id,exam_id,year,marks,question_text,clean_text,predicted_units
+Q1,GATE_ECE,2022,2,What is the bandwidth of an RC low pass filter?,what is the bandwidth of an rc low pass filter,U1
+Q2,GATE_ECE,2022,1,Determine the output of the given op amp circuit,determine the output of the given op amp circuit,U2
