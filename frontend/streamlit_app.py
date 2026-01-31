@@ -4,7 +4,8 @@ import streamlit as st
 import pandas as pd
 import requests
 
-API_BASE = "http://127.0.0.1:8000"
+API_BASE = "https://exam-signal-os-production.up.railway.app"
+
 
 
 
