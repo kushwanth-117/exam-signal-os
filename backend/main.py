@@ -1,13 +1,15 @@
 from fastapi import FastAPI
 from backend.database import Base, engine
-from backend.routes import auth, signals
+from backend import models
+from backend.auth import router as auth_router
+from backend.routes.signals import router as signals_router  # 👈 ADD THIS
 
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Exam Signal OS API")
 
-app.include_router(auth.router)
-app.include_router(signals.router)
+app.include_router(auth_router)
+app.include_router(signals_router)  # 👈 ADD THIS
 
 @app.get("/health")
 def health():

@@ -3,7 +3,6 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 
 DATABASE_URL = "sqlite:///./exam_signal_v2.db"
 
-
 engine = create_engine(
     DATABASE_URL,
     connect_args={"check_same_thread": False}

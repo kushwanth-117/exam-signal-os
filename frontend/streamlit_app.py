@@ -4,7 +4,8 @@ import streamlit as st
 import pandas as pd
 import requests
 
-API_BASE = "https://merry-vision-production.up.railway.app"
+API_BASE = "http://127.0.0.1:8000"
+
 
 
 # ---------------- CONFIG ----------------
@@ -35,12 +36,12 @@ if submitted:
         }
     )
 
-    st.write("LOGIN STATUS:", login_resp.status_code)
-    st.write("LOGIN RESPONSE:", login_resp.text)
-
     if login_resp.status_code == 200:
         st.session_state["token"] = login_resp.json()["access_token"]
-        st.success("Logged in successfully")
+        st.success(f"Logged in as: {email}")
+
+
+
 
     else:
         register_resp = requests.post(
@@ -51,8 +52,6 @@ if submitted:
             }
         )
 
-        st.write("REGISTER STATUS:", register_resp.status_code)
-        st.write("REGISTER RESPONSE:", register_resp.text)
 
         if register_resp.status_code == 200:
             st.session_state["token"] = register_resp.json()["access_token"]
@@ -66,6 +65,12 @@ if submitted:
 if "token" not in st.session_state:
     st.warning("Please log in to access exam insights.")
     st.stop()
+
+    st.sidebar.button(
+    "Logout",
+    on_click=lambda: (st.session_state.clear(), st.rerun())
+)
+
 
 # ---------------- LOAD DATA (AFTER LOGIN) ----------------
 headers = {
@@ -107,7 +112,22 @@ signals_view = signals_df.merge(
     units_df[["unit_id", "unit_name"]],
     on="unit_id",
     how="left"
-).sort_values(by="frequency", ascending=False)
+)
+
+# Priority score (simple but powerful)
+signals_view["priority_score"] = (
+    signals_view["frequency"] *
+    signals_view["total_marks"] *
+    signals_view["years_active"]
+)
+
+signals_view = signals_view.sort_values(
+    by="priority_score",
+    ascending=False
+)
+
+top_units = signals_view.head(10)
+
 
 signals_view_renamed = signals_view.rename(columns={
     "unit_id": "Unit Code",
@@ -117,7 +137,15 @@ signals_view_renamed = signals_view.rename(columns={
     "years_active": "Years Active"
 })
 
+
 st.dataframe(signals_view_renamed, use_container_width=True)
+st.markdown("---")
+st.header("📊 What to Study First (Top 10 Units)")
+
+chart_df = top_units.set_index("unit_name")["priority_score"]
+
+st.bar_chart(chart_df)
+
 
 # ---------------- UNIT EVIDENCE ----------------
 st.markdown("---")

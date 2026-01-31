@@ -3,4 +3,7 @@ uvicorn
 sqlalchemy
 python-jose
 passlib[bcrypt]
-pandas
+bcrypt==4.0.1
+pandas<2
+numpy<2
+requests

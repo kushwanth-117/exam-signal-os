@@ -14,3 +14,6 @@ class UnitSignalOut(BaseModel):
     questions_asked: int
     marks_weight: float
     years_active: int
+
+    class Config:
+        from_attributes = True
